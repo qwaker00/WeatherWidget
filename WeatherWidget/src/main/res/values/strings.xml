@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WeatherWidget</string>
+    <string name="widget_name">Погода</string>
+    <string name="weather">Погода</string>
+    <string name="config">Настройка</string>
+    <string name="weather_type_def">тип погоды</string>
+    <string name="temperature_def">0°C</string>
+    <string name="city_def">Минск</string>
+    <string name="update_time_def">00:00</string>
+    <string name="wheather_type_image_desc">Type of weather in image</string>
+    <string name="at">, </string>
+    <string name="tomorrow">Завтра</string>
+    <string name="title_activity_config">Config</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="background_of_widget">Фон виджета</string>
+    <string name="by_weather">По погоде</string>
+    <string name="transparent">Прозрачный</string>
+    <string name="save">Сохранить</string>
+    <string name="black">Черный</string>
+    <string name="white">Белый</string>
+    <string name="text_of_widget">Цвет текста виджета</string>
+    <string name="at_night">Ночью</string>
+    <string name="loading">Загрузка&#8230;</string>
+    <string name="net_error">Ошибка сети. Нажмите, чтобы попробовать снова.</string>
+    <string name="at_day">Днём</string>
+</resources>

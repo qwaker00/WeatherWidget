@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/transparent"
+        android:id="@+id/mainframe"
+        android:layout_margin="10dp">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            android:id="@+id/form"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/update_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/update_time_def"
+                android:textSize="14sp"
+                android:layout_gravity="right"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/at_text"
+                android:paddingLeft="5dp" />
+
+            <TextView
+                android:id="@+id/city_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:layout_gravity="right"
+                android:layout_above="@+id/tempetature_text"
+                android:layout_alignParentLeft="true" />
+
+            <TextView
+                android:id="@+id/at_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/at"
+                android:textSize="14sp"
+                android:layout_gravity="right"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/city_text" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/weather_type_image"
+                android:contentDescription="@string/wheather_type_image_desc"
+                android:layout_below="@+id/tempetature_text"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/skc_d" />
+
+            <TextView
+                android:id="@+id/tempetature_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/temperature_def"
+                android:textSize="52sp"
+                android:textIsSelectable="false"
+                android:layout_gravity="right"
+                android:layout_below="@id/update_time_text"
+                android:layout_alignParentLeft="true" />
+
+            <TextView
+         android:id="@+id/weather_type_text"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="18sp"
+            android:layout_gravity="right"
+                android:layout_alignTop="@+id/weather_type_image"
+                android:layout_toRightOf="@+id/weather_type_image"
+                android:autoText="false"
+                android:visibility="visible">
+        </TextView>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/update_time_text"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@+id/tempetature_text"
+                android:gravity="center_vertical"
+                android:layout_toRightOf="@+id/tempetature_text"
+                android:id="@+id/relativeLayout">
+
+                <TextView
+                    android:id="@+id/tomorrow_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/tomorrow"
+                    android:textSize="16dp"
+                    android:textIsSelectable="false"
+                    android:layout_alignParentRight="true" />
+
+                <TextView
+                    android:id="@+id/temperature_tomorrow_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/temperature_def"
+                    android:textSize="16dp"
+                    android:textIsSelectable="false"
+                    android:layout_gravity="right"
+                    android:layout_below="@+id/tomorrow_text"
+                    android:layout_alignLeft="@+id/tomorrow_text" />
+
+                <TextView
+                    android:id="@+id/night_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/at_night"
+                    android:textSize="16dp"
+                    android:textIsSelectable="false"
+                    android:layout_alignTop="@+id/tomorrow_text"
+                    android:layout_toLeftOf="@+id/tomorrow_text"
+                    android:layout_marginRight="10dp" />
+
+                <TextView
+                    android:id="@+id/temperature_night_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/temperature_def"
+                    android:textSize="16dp"
+                    android:textIsSelectable="false"
+                    android:layout_gravity="right"
+                    android:layout_alignLeft="@+id/night_text"
+                    android:layout_below="@+id/night_text" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/loading"
+            android:id="@+id/loading_text"
+            android:layout_centerInParent="true"
+            android:textSize="30dp"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
