@@ -27,12 +27,11 @@ class OWMWeather(Weather):
         url = 'http://api.openweathermap.org/data/2.5/weather?q=%s&lang=ru&units=metric' % urllib2.quote(self.cityid)
         resp = json.loads( urllib2.urlopen(url).read() )
 
-        ret = {'current':{}, 'info':{}, 'forecast':[], 'city': self.city}
+        ret = {'current':{}, 'info':{}, 'forecast':[], 'city': self.city, 'source': 'openweathermap'}
         ret['current']['temperature'] = int(resp['main']['temp'] + 0.5)
         ret['current']['weather_type'] = resp['weather'][0]['description']
         ret['current']['image'] = translate_icon(resp['weather'][0]['icon'])
         ret['current']['uptime'] = resp['dt']
-
 
         url = 'http://api.openweathermap.org/data/2.5/forecast?q=%s&lang=ru&units=metric' % urllib2.quote(self.cityid)
         resp = json.loads( urllib2.urlopen(url).read() )
@@ -42,7 +41,7 @@ class OWMWeather(Weather):
         for cnt, it in enumerate(resp['list']):
             if 'night' not in ret['info'] and it['dt_txt'].endswith('03:00:00'):
                 ret['info']['night'] = int(it['main']['temp'] + 0.5)
-            if 'tomorrow' not in ret['info'] and it['dt_txt'].endswith('15:00:00') and cnt > 4:
+            if 'tomorrow' not in ret['info'] and it['dt_txt'].endswith('15:00:00') and cnt > 5:
                 ret['info']['tomorrow'] = int(it['main']['temp'] + 0.5)
                 
             if it['dt_txt'].endswith('15:00:00'):

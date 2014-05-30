@@ -12,7 +12,7 @@ class Weather(object):
 
     def get_with_cache(self):
         t = time.time()
-        if t - self.lastupdate > 60:
+        if t - self.lastupdate > 60 * 5:
             self.cached = self.get()
             self.lastupdate = t
         return self.cached

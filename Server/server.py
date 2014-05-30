@@ -4,6 +4,7 @@ import SocketServer
 import json
 import gzip
 import urllib2
+import copy
 
 PORT = 8181
 
@@ -23,25 +24,34 @@ class Aggregator(weather.Weather):
         count = len(self.sources)
         response = [s.get() for s in self.sources]
 
-        base = response[0]
+        base = copy.deepcopy(response[0])
         base['current']['temperature'] = (sum([r['current']['temperature'] for r in response]) + count/2) / count
 
-        base['info']['tomorrow'] = (sum([r['info']['tomorrow'] for r in response]) + count/2) / count
-        base['info']['night'] = (sum([r['info']['night'] for r in response]) + count/2) / count
+        base['info']['tomorrow'] = None
+        base['info']['night'] = None
+	for r in reversed(response):
+		if  base['info']['tomorrow'] is not None:
+			base['info']['night'] = (base['info']['night'] + r['info']['night'] + 1) / 2
+			base['info']['tomorrow'] = (base['info']['tomorrow'] + r['info']['tomorrow'] + 1) / 2
+		else:
+			base['info']['night'] = r['info']['night']
+			base['info']['tomorrow'] = r['info']['tomorrow']
 
         dd = {}
-        for r in reversed(response):
-            for d in r['forecast']:
-                if d['date'] not in dd:
-                    dd[ d['date'] ] = d
-                else:
-                    dfc = dd[ d['date'] ]
-                    dfc['day']['temperature'] = (dfc['day']['temperature'] + d['day']['temperature'] + 1) / 2
-                    dfc['night']['temperature'] = (dfc['night']['temperature'] + d['night']['temperature'] + 1) / 2
-                    
+	for r in reversed(response):
+		for d in r['forecast']:
+			if d['date'] not in dd:
+				dd[ d['date'] ] = d
+			else:
+				dfc = dd[ d['date'] ]
+				dfc['day']['temperature'] = (dfc['day']['temperature'] + d['day']['temperature'] + 1) / 2
+				dfc['night']['temperature'] = (dfc['night']['temperature'] + d['night']['temperature'] + 1) / 2
+
         base['forecast'] = []
         for d in sorted(dd.keys()):
             base['forecast'].append(dd[d])
+
+	base['source'] = 'mixed'
 
         return base
 

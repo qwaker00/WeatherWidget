@@ -29,7 +29,7 @@ class ForecastIOWeather(Weather):
         url = 'https://api.forecast.io/forecast/8387f701f50fb586b03da1dc6d680f49/%s?units=si&exclude=minutely,daily,flags' % (self.cityid)
         resp = json.loads( urllib2.urlopen(url).read() )
 
-        ret = {'current':{}, 'info':{}, 'forecast':[], 'city': self.city}
+        ret = {'current':{}, 'info':{}, 'forecast':[], 'city': self.city, 'source': 'forecastio'}
         ret['current']['temperature'] = int(resp['currently']['temperature'] + 0.5)
         ret['current']['weather_type'] = resp['currently']['summary']
         ret['current']['image'] = translate_icon(resp['currently']['icon'])
@@ -40,9 +40,8 @@ class ForecastIOWeather(Weather):
         for cnt, h in enumerate(resp['hourly']['data']):
             if 'night' not in ret['info'] and h['time'] % 86400 == 10800:
                 ret['info']['night'] = int(h['temperature'] + 0.5)
-            if 'tomorrow' not in ret['info'] and h['time'] % 86400 == 54000 and cnt > 4:
-                ret['info']['tomorrow'] = int(h['temperature'] + 0.5 + 0.5)
-
+            if 'tomorrow' not in ret['info'] and h['time'] % 86400 == 54000 and cnt > 15:
+                ret['info']['tomorrow'] = int(h['temperature'] + 0.5)
 
         day = resp['hourly']['data'][0]['time'] - resp['hourly']['data'][0]['time'] % 86400
         for it in xrange(1, 10):
@@ -54,7 +53,7 @@ class ForecastIOWeather(Weather):
                 if h['time'] % 86400 == 10800:
                     tempn[date] = (int(h['temperature'] + 0.5), translate_icon(h['icon']))
                 if h['time'] % 86400 == 54000:
-                    tempd[date] = (int(h['temperature'] + 0.5 + 0.5), translate_icon(h['icon']))
+                    tempd[date] = (int(h['temperature'] + 0.5), translate_icon(h['icon']))
 
         foredays = set(tempd.keys()) & set(tempn.keys())
         for fd in sorted(foredays):

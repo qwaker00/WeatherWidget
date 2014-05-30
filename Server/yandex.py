@@ -20,7 +20,7 @@ class YandexWeather(Weather):
         url = 'http://export.yandex.ru/weather-ng/forecasts/%s.xml' % (self.cityid)
         response = ET.fromstring(urllib2.urlopen(url).read())
 
-        ret = {'current':{}, 'info':{}, 'forecast':[], 'city': self.city}
+        ret = {'current':{}, 'info':{}, 'forecast':[], 'city': self.city, 'source': 'yandex'}
 
         now_temp = response.find('fc:fact/fc:temperature', namespaces=self.namespaces)
         if now_temp is not None:
