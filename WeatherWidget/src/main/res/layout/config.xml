@@ -20,19 +20,13 @@
         android:id="@+id/bg_radio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <RadioButton
-            android:id="@+id/bg_radio_weather"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/by_weather">
-        </RadioButton>
+
         <RadioButton
             android:id="@+id/bg_radio_transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/transparent"
-            android:checked="false">
+            android:checked="true">
         </RadioButton>
 
         <RadioButton
@@ -40,6 +34,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/black"
+            android:checked="false" />
+
+        <RadioButton
+            android:id="@+id/bg_radio_white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/white"
             android:checked="false" />
     </RadioGroup>
 

@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
-import java.util.regex.Matcher;
+import java.util.Calendar;
 import java.util.regex.Pattern;
 
 import android.app.AlarmManager;
@@ -22,6 +22,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Created by grickevich on 12/10/13.
@@ -74,7 +77,7 @@ public class MyWidget extends AppWidgetProvider {
     static final Pattern temperatureTomorrowPattern = Pattern.compile(".*<temperature.*color=\"[\\w\\d]+\".*type=\"tomorrow\".*>(.+)</temperature>.*");
     static final Pattern temperatureNightPattern = Pattern.compile(".*<temperature.*color=\"[\\w\\d]+\".*type=\"night\".*>(.+)</temperature>.*");
     static final Pattern simpleTemperaturePattern = Pattern.compile(".*<temperature>(.+)</temperature>.*");
-    static final Pattern weatherTypePattern = Pattern.compile(".*<weather_type>(.+)</weather_type>.*");
+    static final Pattern weatherTypePattern = Pattern.compile(".*<weather_type>(    .+)</weather_type>.*");
     static final Pattern todayImagePattern = Pattern.compile(".*<image-v3.*>(.+)</image-v3>.*");
     static final Pattern observationPattern = Pattern.compile(".*<observation_time>(.+)</observation_time>.*");
     static final Pattern startDayPattern = Pattern.compile(".*<day date=\"(.*)\">.*");
@@ -151,108 +154,47 @@ public class MyWidget extends AppWidgetProvider {
                     try {
                         Log.d(LOG_TAG, "try!");
 
-                        URL url = new URL("http://export.yandex.ru/weather-ng/forecasts/" + s.cityId + ".xml");
-                        URLConnection conn = url.openConnection();
-                        conn.setConnectTimeout(3000);
-                        conn.setReadTimeout(3000);
-                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                        String input;
                         TParsedData result = new TParsedData();
-                        result.data = s;
+                        URL url = new URL("http://195.50.18.124:8181/");
+                        URLConnection conn = url.openConnection();
+                        conn.setConnectTimeout(10000);
+                        conn.setReadTimeout(10000);
 
-                        boolean dayPart = false;
-                        String curDay = null;
-                        StringBuilder dates = new StringBuilder();
-
-                        while ((input = br.readLine()) != null) {
-                            if (result.temperature == null) {
-                                Matcher m = temperaturePattern.matcher(input);
-                                if (m.matches()) {
-                                    result.bgColor = Color.parseColor("#" + m.group(1));
-                                    result.temperature = m.group(2);
-                                }
-                            }
-                            if (result.temperatureTomorrow == null) {
-                                Matcher m = temperatureTomorrowPattern.matcher(input);
-                                if (m.matches()) {
-                                    result.temperatureTomorrow = m.group(1);
-                                }
-                            }
-                            if (result.temperatureNight== null) {
-                                Matcher m = temperatureNightPattern.matcher(input);
-                                if (m.matches()) {
-                                    result.temperatureNight = m.group(1);
-                                }
-                            }
-                            if (result.weatherType == null) {
-                                Matcher m = weatherTypePattern.matcher(input);
-                                if (m.matches()) {
-                                    result.weatherType = m.group(1);
-                                }
-                            }
-                            if (result.todayImage == null) {
-                                Matcher m = todayImagePattern.matcher(input);
-                                if (m.matches()) {
-                                    result.todayImage = m.group(1);
-                                }
-                            }
-                            if (result.observationTime == null) {
-                                Matcher m = observationPattern.matcher(input);
-                                if (m.matches()) {
-                                    result.observationTime = m.group(1);
-                                }
-                            }
-                            {
-                                Matcher m = startDayPattern.matcher(input);
-                                if (m.matches()) {
-                                    curDay = m.group(1);
-                                    dates.append(curDay);
-                                }
-                            }
-                            if (curDay != null) {
-                                {
-                                    Matcher m = dayShortPattern.matcher(input);
-                                    if (m.matches()) {
-                                        dayPart = true;
-                                    }
-                                }
-                                {
-                                    Matcher m = nightShortPattern.matcher(input);
-                                    if (m.matches()) {
-                                        dayPart = true;
-                                    }
-                                }
-                            }
-                            if (dayPart) {
-                                {
-                                    Matcher m = dayPartEndPattern.matcher(input);
-                                    if (m.matches()) {
-                                        dayPart = false;
-                                    }
-                                }
-                                {
-                                    Matcher m = simpleTemperaturePattern.matcher(input);
-                                    if (m.matches()) {
-                                        dates.append("#").append(m.group(1));
-                                    }
-                                }
-                                {
-                                    Matcher m = todayImagePattern.matcher(input);
-                                    if (m.matches()) {
-                                        dates.append("#").append(m.group(1));
-                                    }
-                                }
-                            }
-                            {
-                                Matcher m = endDayPattern.matcher(input);
-                                if (m.matches()) {
-                                    dates.append("|");
-                                    curDay = null;
-                                }
-                            }
+                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        String line;
+                        StringBuilder sb = new StringBuilder();
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line);
                         }
-                        br.close();
+
+                        result.data = s;
+                        JSONObject o = new JSONObject(sb.toString());
+                        JSONObject current = o.getJSONObject("current");
+                        JSONArray forecast = o.getJSONArray("forecast");
+                        JSONObject info = o.getJSONObject("info");
+
+                        result.temperature = current.getString("temperature");
+                        result.weatherType = current.getString("weather_type");
+                        result.todayImage = current.getString("image");
+                        result.observationTime = current.getLong("uptime");
+
+                        result.temperatureTomorrow = info.getString("tomorrow");
+                        result.temperatureNight = info.getString("night");
+
+                        StringBuilder dates = new StringBuilder();
+                        for (int i = 0; i < forecast.length(); ++i) {
+                            JSONObject day = forecast.getJSONObject(i);
+                            dates.append(day.getString("date"));
+                            dates.append('#');
+                            dates.append(day.getJSONObject("day").getString("temperature"));
+                            dates.append('#');
+                            dates.append(day.getJSONObject("day").getString("image"));
+                            dates.append('#');
+                            dates.append(day.getJSONObject("night").getString("temperature"));
+                            dates.append('#');
+                            dates.append(day.getJSONObject("night").getString("image"));
+                            dates.append('|');
+                        }
 
                         Log.d(LOG_TAG, "Parsed data: " + dates.toString());
                         s.prefs.edit().putString(WIDGET_WEATHER_DATA + s.widgetId, dates.toString()).commit();
@@ -282,11 +224,6 @@ public class MyWidget extends AppWidgetProvider {
                         Log.d(LOG_TAG, "Good result");
                         r.data.widget.setImageViewResource(R.id.weather_type_image, r.data.context.getResources().getIdentifier(r.todayImage, "drawable", r.data.context.getPackageName()));
 
-                        String bgColor = r.data.prefs.getString(ConfigActivity.WIDGET_BG_COLOR + r.data.widgetId, null);
-                        if (bgColor != null && bgColor.equals("weather")) {
-                            r.data.widget.setInt(R.id.mainframe, "setBackgroundColor", r.bgColor);
-                        }
-
                         r.data.widget.setTextViewText(R.id.weather_type_text, r.weatherType);
 
                         if (r.temperature.charAt(0) != '-' && r.temperature.charAt(0) != '+' && !r.temperature.equals("0")) r.temperature = "+" + r.temperature;
@@ -298,8 +235,17 @@ public class MyWidget extends AppWidgetProvider {
                         if (r.temperatureNight.charAt(0) != '-' && r.temperatureNight.charAt(0) != '+' && !r.temperatureTomorrow.equals("0")) r.temperatureNight = "+" + r.temperatureNight;
                         r.data.widget.setTextViewText(R.id.temperature_night_text, r.temperatureNight + "°C");
 
-                        int l = r.observationTime.length();
-                        r.data.widget.setTextViewText(R.id.update_time_text, r.observationTime.substring(l - 8, l - 3));
+                        Calendar uptime = Calendar.getInstance();
+                        uptime.setTimeInMillis(r.observationTime * 1000);
+                        r.data.widget.setTextViewText(R.id.update_time_text,
+                                String.format("%02d.%02d.%04d %02d:%02d",
+                                                  uptime.get(Calendar.DAY_OF_MONTH),
+                                                  uptime.get(Calendar.MONTH),
+                                                  uptime.get(Calendar.YEAR),
+                                                  uptime.get(Calendar.HOUR_OF_DAY),
+                                                  uptime.get(Calendar.MINUTE)
+                                )
+                        );
 
                         r.data.widgetManager.updateAppWidget(r.data.widgetId, r.data.widget);
                     } catch (Exception e) {
@@ -362,11 +308,10 @@ class TUpdateTaskData {
 
 class TParsedData {
     String              todayImage;
-    int                 bgColor;
     String              temperature;
     String              temperatureTomorrow;
     String              temperatureNight;
     String              weatherType;
-    String              observationTime;
+    long                observationTime;
     TUpdateTaskData     data;
 }

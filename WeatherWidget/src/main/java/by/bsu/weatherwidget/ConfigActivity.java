@@ -62,8 +62,8 @@ public class ConfigActivity extends Activity {
             Log.d(LOG_TAG, "Bg: " + bgColor);
             if (bgColor != null) {
                 RadioGroup rg = (RadioGroup)findViewById(R.id.bg_radio);
-                if (bgColor.equals("weather"))
-                    rg.check(R.id.bg_radio_weather);
+                if (bgColor.equals("white"))
+                    rg.check(R.id.bg_radio_white);
                 else if (bgColor.equals("transparent"))
                     rg.check(R.id.bg_radio_transparent);
                 else if (bgColor.equals("black"))
@@ -91,8 +91,8 @@ public class ConfigActivity extends Activity {
             case R.id.bg_radio_transparent:
                 bgColor = "transparent";
                 break;
-            case R.id.bg_radio_weather:
-                bgColor = "weather";
+            case R.id.bg_radio_white:
+                bgColor = "white";
                 break;
             case R.id.bg_radio_black:
                 bgColor = "black";
